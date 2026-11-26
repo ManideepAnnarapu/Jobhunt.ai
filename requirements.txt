@@ -1,0 +1,2 @@
+pypdf>=5,<8
+playwright>=1.50,<2

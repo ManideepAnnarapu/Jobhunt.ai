@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jobhunt · Application workspace</title><link rel="stylesheet" href="/style.css"><script src="/ui.js" defer></script></head>
+<body>
+<aside>
+  <a href="#jobs" class="brand"><b aria-hidden="true">J</b><span>Jobhunt</span></a>
+  <nav aria-label="Workspace">
+    <a href="#jobs"><span aria-hidden="true">▦</span>Job board</a>
+    <a href="#companies"><span aria-hidden="true">▤</span>Company boards</a>
+    <a href="#resume"><span aria-hidden="true">▱</span>Base résumé</a>
+    <a href="#answers"><span aria-hidden="true">◫</span>Answer library</a>
+    <a href="#schedule"><span aria-hidden="true">◷</span>Scan schedule</a>
+  </nav>
+  <div class="sidebar-footer"><span class="connection" aria-hidden="true"></span> Runs on this Mac</div>
+</aside>
+<main>
+  <div class="topbar"><span>Workspace</span><span aria-hidden="true">/</span><strong id="section-name">Job board</strong></div>
+  <div id="status" role="status" hidden></div>
+  <div id="board-overview">
+    <header class="hero"><div><h1>Job board</h1><p>Roles scoring above 70% against your base résumé.</p></div><div class="hero-actions"><button id="scan" class="primary">Run scan</button><span id="scan-summary"></span></div></header>
+    <section class="stats" aria-label="Board summary">
+      <div><span>Jobs on board</span><strong id="match-count">0</strong></div>
+      <div><span>In application queue</span><strong id="queue-count">0</strong></div>
+      <div><span>Résumés ready</span><strong id="pdf-count">0</strong></div>
+      <div><span>Applied</span><strong id="sent-count">0</strong></div>
+    </section>
+  </div>
+  <div class="workspace-grid" id="board-workspace">
+  <section class="panel" id="jobs">
+    <div class="section-title"><h2>Matching roles</h2><div class="actions"><a class="button" href="/api/file?kind=jobs">Export tracker</a><button id="add-job">Add job</button></div></div>
+    <div class="quick-views" aria-label="Quick job views">
+      <button type="button" data-view="matches">Job board</button>
+      <button type="button" data-view="in progress">In Progress</button>
+      <button type="button" data-view="applied">Applied</button>
+      <button type="button" data-view="shortlist">Shortlist <span id="shortlist-count"></span></button>
+    </div>
+    <div class="fields board-filters">
+      <label class="search-field">Search<input id="job-search" type="search" placeholder="Role, company, or location"></label>
+      <label>Company<select id="job-company" aria-label="Filter by company"><option value="">All companies</option></select></label>
+      <label>Location<select id="job-location" aria-label="Filter by location"><option value="">All locations</option></select></label>
+      <label>Status<select id="job-filter" aria-label="Filter by status"><option value="matches">Job board</option><option value="shortlist">Shortlist</option><option value="found">Found</option><option value="in progress">In progress</option><option value="applied">Applied</option><option value="failed">Failed</option><option value="retry">Needs retry</option><option value="archived">Archived</option><option value="removed">Removed</option></select></label>
+      <label>Sort by<select id="job-sort" aria-label="Sort jobs"><option value="match">Best match</option><option value="newest">Newest found</option><option value="company">Company</option></select></label>
+      <button id="clear-filters" type="button">Reset</button>
+    </div>
+    <div class="board-toolbar">
+      <label class="select-control"><input id="select-page" type="checkbox"> Select visible</label>
+      <span id="job-count"></span>
+    </div>
+    <div class="bulk-bar" id="bulk-bar" hidden>
+      <strong id="selection-count"></strong>
+      <div class="actions"><button id="clear-selection">Clear</button><button id="bulk-remove" class="danger">Remove selected</button><button id="bulk-restore">Restore selected</button><button id="bulk-apply" class="primary">Auto-apply selected</button></div>
+    </div>
+    <div id="job-list"></div><button id="more-jobs" type="button" hidden>Show more jobs</button>
+  </section>
+  <section class="panel activity-panel" aria-labelledby="activity-heading">
+    <h2 id="activity-heading">Application activity</h2>
+    <p class="activity-label" id="activity-label">Ready to apply</p>
+    <strong id="activity-job" hidden></strong>
+    <p id="activity-detail">Start auto-apply from a role. Jobhunt checks fit, prepares your résumé, and handles supported forms.</p>
+    <ol class="flow" aria-label="Auto-apply stages">
+      <li data-stage="fit">Check role fit</li><li data-stage="form">Prepare application</li><li data-stage="submit">Confirm submission</li>
+    </ol>
+    <button id="activity-action" type="button" hidden></button>
+    <section id="queue-panel" class="queue-panel" aria-label="Application queue" hidden>
+      <div><strong id="queue-title"></strong><p id="queue-detail"></p></div>
+      <div class="actions"><button id="queue-skip">Skip this job</button><button id="queue-fill" hidden>Scan form</button><button id="queue-done" hidden>Mark applied</button><button id="queue-start" class="primary">Open next application</button></div>
+    </section>
+  </section>
+  </div>
+  <section class="panel" id="companies"><div class="section-title"><h2>Company boards</h2><div class="actions"><button id="retry-scans" type="button">Retry failed scans</button><a class="button" href="/api/file?kind=companies">Download CSV</a></div></div><p>See how many postings each board returned and which sources need attention.</p>
+    <form id="company-form" class="fields"><label>Company<input name="company" required placeholder="Company name"></label><label>Career portal<input name="portal" type="url" required placeholder="https://jobs.lever.co/company"></label><button class="primary">Save company</button></form><div id="company-list"></div>
+  </section>
+  <section class="panel" id="resume"><div class="section-title"><h2>Base résumé</h2></div><p>Upload the PDF for matching and the corresponding LaTeX template for tailoring.</p>
+    <div class="fields uploads"><label>Base PDF <span id="pdf-state"></span><input id="base-pdf" type="file" accept=".pdf"></label><label>LaTeX template <span id="tex-state"></span><input id="base-tex" type="file" accept=".tex"></label><label>Original resume.cls <span id="cls-state"></span><input id="base-cls" type="file" accept=".cls"></label></div>
+    <details><summary>How to mark editable LaTeX text</summary><p>Put a unique marker pair around each standalone plain-text line. Keep formatting commands outside the markers.</p><pre>\item{
+% JOBHUNT BEGIN experience-1
+Your existing accomplishment goes here.
+% JOBHUNT END experience-1
+}</pre></details>
+    <p id="tools"></p>
+  </section>
+  <section class="panel" id="answers"><div class="section-title"><h2>Answer library</h2><a class="button" href="/api/file?kind=answers">Download CSV</a></div><p>Saved answers are reused when the same question appears.</p>
+    <form id="answer-form" class="fields"><label>Application question<input name="question" required></label><label>Your answer<input name="answer" required></label><button class="primary">Save answer</button></form><label class="answer-search">Search saved answers<input id="answer-search" type="search" placeholder="Question or answer"></label><p id="answer-count" aria-live="polite"></p><div id="answer-list"></div>
+  </section>
+  <section class="panel" id="schedule"><div class="section-title"><h2>Scan schedule</h2></div><p>Runs once per day in Eastern time when Jobhunt is running. A missed scan runs when the app starts later that day.</p>
+    <form id="schedule-form" class="fields"><label>Eastern time<input name="time" type="time" required value="08:00"></label><label class="check"><input name="enabled" type="checkbox"> Enable daily scan</label><button class="primary">Save schedule</button></form><p id="last-scan"></p>
+  </section>
+</main>
+<dialog id="dialog" aria-labelledby="dialog-title"><div class="section-title"><h2 id="dialog-title"></h2><button id="close-dialog" aria-label="Close dialog">Close</button></div><div id="dialog-content"></div></dialog>
+</body></html>
